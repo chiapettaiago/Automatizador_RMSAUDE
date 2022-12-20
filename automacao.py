@@ -34,7 +34,7 @@ py.click()
 #Selecionar mês dos resultados
 py.moveTo(325, 392)
 py.click()
-py.write("01")
+mes = py.write("01")
 py.moveTo(525, 396)
 py.click()
 #Convenio
@@ -51,10 +51,10 @@ py.click()
 contador = 0
 while contador <= 23:
     #Variável de Geração de Screenshots
-    im = pyautogui.screenshot('imagens/image.jpg', region=(400,235,54,20))
-    time.sleep(10)
+    im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,20))
+    time.sleep(5)
     #Variável de processamento de imagens e obtenção de resultado para o sistema 100% testada e funcionando
-    phrase = ocr.image_to_string(Image.open('imagens/image.jpg'), lang='por')
+    phrase = ocr.image_to_string(Image.open(f'imagens/image{contador}.png'), lang='por')
     print(phrase)
     py.alert(phrase)
 
