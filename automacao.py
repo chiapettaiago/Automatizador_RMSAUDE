@@ -1,6 +1,5 @@
 import pyautogui as py
 import pyautogui
-import PIL
 import pytesseract as ocr
 from PIL import Image
 import time
