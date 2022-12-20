@@ -47,15 +47,22 @@ py.click()
 py.moveTo(914, 393)
 py.click()
 
-#Variável de Geração de Screenshots
-im = pyautogui.screenshot('image.jpg', region=(400,235,54,20))
-time.sleep(10)
-#Variável de processamento de imagens e obtenção de resultado para o sistema 100% testada e funcionando
-phrase = ocr.image_to_string(Image.open('image.jpg'), lang='por')
-print(phrase)
-py.alert(phrase)
+#Gerador de repetições
+contador = 0
+while contador <= 23:
+    #Variável de Geração de Screenshots
+    im = pyautogui.screenshot('imagens/image.jpg', region=(400,235,54,20))
+    time.sleep(10)
+    #Variável de processamento de imagens e obtenção de resultado para o sistema 100% testada e funcionando
+    phrase = ocr.image_to_string(Image.open('imagens/image.jpg'), lang='por')
+    print(phrase)
+    py.alert(phrase)
 
-py.press('down')
-
+    py.press('down')
+    contador = contador + 1
+    
 #Alerta de encerramento 
 py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
+exit()
+
+
