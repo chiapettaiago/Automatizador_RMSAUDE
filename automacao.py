@@ -3,6 +3,7 @@ import pyautogui
 import pytesseract as ocr
 from PIL import Image
 import time
+import conecta
 
 #Caminho até a automação
 py.alert("Atenção! A automação está sendo iniciada.")
@@ -51,7 +52,7 @@ contador = 0
 while contador <= 23:
     #Variável de Geração de Screenshots
     im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,20))
-    time.sleep(5)
+    time.sleep(1)
     #Variável de processamento de imagens e obtenção de resultado para o sistema 100% testada e funcionando
     phrase = ocr.image_to_string(Image.open(f'imagens/image{contador}.png'), lang='por')
     print(phrase)
@@ -63,5 +64,3 @@ while contador <= 23:
 #Alerta de encerramento 
 py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
 exit()
-
-
