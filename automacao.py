@@ -3,7 +3,7 @@ import pyautogui
 import pytesseract as ocr
 from PIL import Image
 import time
-import conecta
+import pygetwindow
 
 #Caminho até a automação
 py.alert("Atenção! A automação está sendo iniciada.")
@@ -28,28 +28,34 @@ py.moveTo(784, 26)
 py.click()
 py.moveTo(782, 142)
 py.click()
-time.sleep(3)
-py.moveTo(573, 697)
-py.click()
-#Selecionar mês dos resultados
-py.moveTo(325, 392)
-py.click()
-mes = py.write("01")
-py.moveTo(525, 396)
-py.click()
-#Convenio
-py.moveTo(589, 416)
-py.click()
-py.moveTo(699, 388)
-py.click()
-py.moveTo(836, 427)
-py.click()
-py.moveTo(914, 393)
-py.click()
+title = "Controle de Recebimentos"
+
+window = pygetwindow.getWindowsWithTitle(title)[0]
+if window.title == "Controle de Recebimentos (RDESKAMB.UNIFESO.LAN)":
+    py.moveTo(573, 697)
+    py.click()
+    #Selecionar mês dos resultados
+    py.moveTo(325, 392)
+    py.click()
+    mes = py.write("012021")
+    py.moveTo(525, 396)
+    py.click()
+    #Convenio
+    py.moveTo(589, 416)
+    py.click()
+    py.moveTo(699, 388)
+    py.click()
+    py.moveTo(836, 427)
+    py.click()
+    py.moveTo(914, 393)
+    py.click()
+else:
+    py.alert("A janela de Recebimentos não startou. Encerrando...")
+    exit()
 
 #Gerador de repetições
 contador = 0
-while contador <= 23:
+while contador <= 8:
     #Variável de Geração de Screenshots
     im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,20))
     time.sleep(1)
