@@ -1,15 +1,11 @@
 import pyodbc
 
-dados_conexao = (
-    "Driver={Devart ODBC Driver for Oracle};"
-    "Server=10.1.0.137;"
-    "PORT:1521;"
-    "Database=DBFESOCONS;"
-    "Username=rm;"
-    "Password=f/M701iv_LoAE1@;"
-    "SERVICE_NAME=dbfeso2;"
-)
+dados_conexao = ('DRIVER={Devart ODBC Driver for Oracle};Host=10.1.0.137;Port=1521;SID=DBFESOCONS;UID=GTIC_078463;Password=gtic_sup23_078463;Direct=True')
 
 conexao = pyodbc.connect(dados_conexao)
 cursor = conexao.cursor()
 
+cursor.execute("SELECT * FROM SZPACIENTE;")
+tables = cursor.fetchall()
+tabela = cursor.rowVerColumns['NOMEPACIENTE']
+print(tabela)
