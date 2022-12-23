@@ -4,25 +4,14 @@ import pytesseract as ocr
 from PIL import Image
 import time
 import pygetwindow
+import pyodbc
 
+dados_conexao = ('DRIVER={Devart ODBC Driver for Oracle};Host=10.1.0.137;Port=1521;SID=DBFESOCONS;UID=GTIC_078463;Password=gtic_sup23_078463;Direct=True')
 #Caminho até a automação
+inicio = time.time()
 py.alert("Atenção! A automação está sendo iniciada.")
-py.PAUSE = 1.5
-'''
-#Dar dois cliques na janela do aplicativo saúde
-py.moveTo(107,334)
-py.doubleClick()
-#Inserir a senha
-time.sleep(3)
-#py.write(senha.senha_saude)
-#Aguardar o app carregar
+py.PAUSE = 1.2
 
-#Acessar o App
-py.write(senha.senha_login_saude)
-py.press('enter')
-time.sleep(40)
-
-'''
 #Acessar onde ficam os dados a serem obtidos
 py.moveTo(784, 26)
 py.click()
@@ -54,8 +43,14 @@ else:
     exit()
 
 #Gerador de repetições
+conexao = pyodbc.connect(dados_conexao)
+cursor = conexao.cursor()
+
+cursor.execute("SELECT count(CODCOMPRADOR) FROM SZFATURACONVENIO INNER JOIN SZCADGERAL ON SZFATURACONVENIO.CODCOMPRADOR = SZCADGERAL.CODGERAL WHERE DATAGERACAO BETWEEN '01-jan-2021' AND '30-jan-2021' AND RAZAOSOCIALPRESTADOR = 'HOSPITAL DAS CLINICAS DE TERESOPOLIS' AND CODGERAL = 5;", 
+"SELECT count(CODCOMPRADOR) FROM SZFATURACONVENIO INNER JOIN SZCADGERAL ON SZFATURACONVENIO.CODCOMPRADOR = SZCADGERAL.CODGERAL WHERE DATAGERACAO BETWEEN '01-jan-2021' AND '30-jan-2021' AND RAZAOSOCIALPRESTADOR = 'HOSPITAL DAS CLINICAS DE TERESOPOLIS' AND CODGERAL = 054;" )
+tables = int(cursor.fetchval())
 contador = 0
-while contador <= 8:
+while contador != tables:
     #Variável de Geração de Screenshots
     im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,20))
     time.sleep(1)
@@ -66,7 +61,31 @@ while contador <= 8:
 
     py.press('down')
     contador = contador + 1
-    
+
+#Clique na seção de Contas
+py.moveTo(610,356)
+py.click()
+#Dois cliques na Conta a ser conferida
+py.moveTo(386, 462)
+py.doubleClick()
+#recebimento
+py.moveTo(479,147)
+py.click()
+#Clicar em valor e apagar
+py.moveTo(412, 252)
+py.click()
+py.moveTo(494, 245)
+py.doubleClick()
+py.hotkey('ctrl', 'x')
+py.moveTo(493,291)
+py.click()
+py.hotkey('ctrl', 'v')
+
+
+
+fim = time.time()
+print(fim - inicio)
+
 #Alerta de encerramento 
 py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
 exit()
