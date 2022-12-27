@@ -84,6 +84,7 @@ while contador != tables:
         #Colar em Perda
         py.moveTo(493,291)
         py.click()
+
         py.press('backspace')
         py.write(phrase1)
         #Gravando Processo no sistema
@@ -96,18 +97,26 @@ while contador != tables:
         py.press('enter')
         py.press('enter')
         py.press('enter')
+        time.sleep(1)
+        title = "Erro"
+        window = pygetwindow.getWindowsWithTitle(title)[0]
+        if window.title == "Erro (RDESKAMB.UNIFESO.LAN)":
+            py.press('enter')
+        else:
 
-        '''
-        #Clicando na seção de Faturas para conferência
-        py.moveTo(411, 351)
-        py.click()
-        '''
+            py.alert('Mensagem de erro não apareceu')
+            exit()
+        #Cancelando
+        py.press('tab')
+        py.press('tab')
+        py.press('enter')
         fim = time.time()
-        print(fim - inicio)
+        resultado = (fim - inicio)
+        print(resultado)
         contador = contador + 1
     else:
         py.alert("Resoluçao de tela não compatível com o sistema. Finalizando...")
         exit()
-#Alerta de encerramento 
+#Alerta de encerramento     
 py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
 exit()
