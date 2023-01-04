@@ -16,8 +16,8 @@ from tkinter import ttk
 window = tk.Tk()
 window.title('RPA HCTCO')
 window.geometry('400x300')
-window.resizable(width=False, height=False)
 #Recurso que impede que o usuário redimensione a janela
+window.resizable(width=False, height=False)
 w = Label(window, text='Escolha entre as opções abaixo: ', font=35)
 w.place(x=90, y=10)
 
@@ -31,7 +31,7 @@ def clear2():
 def clear1():
     Checkbutton1.set(0)
 
-
+#CheckBox da Interface do App 
 btn1 = Checkbutton(window, text="Baixa", variable=Checkbutton1, onvalue=1, offvalue=0, height=2, width=10, command=clear2)
 btn2 = Checkbutton(window, text="Controle de Recebimentos", variable=Checkbutton2, onvalue=1, offvalue=0, height=2, width=20, command=clear1)
 
@@ -84,12 +84,13 @@ engine.setProperty("voice", "brazil")
 engine.setProperty("rate", 225)
 engine.runAndWait()
 
+#Aviso de recurso não disponível
 def baixa():
     messagebox.showwarning("Recurso Futuro", "O Recurso Selecionado Ainda está sendo desenvolvido e estará disponível em breve. Fique tranquilo, nós avisaremos.")
 
 
 dados_conexao = ('DRIVER={Devart ODBC Driver for Oracle};Host=10.1.0.137;Port=1521;SID=DBFESOCONS;UID=GTIC_078463;Password=gtic_sup23_078463;Direct=True')
-#Caminho até a automação
+#Rotina de automação a ser executada
 def automacao():
     inicio = time.time()
     py.alert("Atenção! A automação está sendo iniciada.")
@@ -97,6 +98,7 @@ def automacao():
     engine.runAndWait()
     py.PAUSE = 1.2
     res = py.size()
+    print(res)
     if res.width == 1366 and res.height == 768:
         try:
             #Acessar onde ficam os dados a serem obtidos
@@ -264,7 +266,7 @@ def automacao():
             exit()
         except:
             print("Resolução de tela não cadastrada no sistema")
-            exit()        
+            exit()
     else:
         py.alert("Resolução de tela não cadastrada. Encerrando...")
         exit()
@@ -815,10 +817,12 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
+                py.press('down')
                 py.doubleClick()
             elif contador == 39:
                 py.moveTo(517, 645)
                 py.click()
+                py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -878,10 +882,12 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
+                py.press('down')
                 py.doubleClick()
             elif contador == 41:
                 py.moveTo(517, 645)
                 py.click()
+                py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1061,6 +1067,7 @@ def automacao():
             elif contador == 46:
                 py.moveTo(517, 645)
                 py.click()
+                py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
