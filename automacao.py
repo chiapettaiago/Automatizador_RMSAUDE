@@ -108,7 +108,9 @@ def automacao():
             py.click()
             title = "Controle de Recebimentos"
             window = pygetwindow.getWindowsWithTitle(title)[0]
+            contador1 = 0
             if window.title == "Controle de Recebimentos (RDESKAMB.UNIFESO.LAN)":
+                contador1 = contador1 + 1
                 py.moveTo(573, 697)
                 py.click()
                 #Selecionar mês dos resultados
@@ -254,13 +256,25 @@ def automacao():
                 py.moveTo(699, 388)
                 py.click()
                 if caixaUnidade.get() == "HOSPITAL DAS CLÍNICAS DE TERESÓPOLIS":
+                    codHospital = 3
                     py.moveTo(836, 427)
                     py.click()
+                elif caixaUnidade.get() == "AMBULATÓRIO (FATURAMENTO)":
+                    codHospital = 13
+                    py.moveTo(802, 410)
+                    py.click()
+                elif caixaUnidade.get() == "MATERNIDADE DO HCTCO (FATURAMENTO)":
+                    codHospital = 14
+                    py.moveTo(819, 438)
+                    py.click()
+
                 py.moveTo(914, 393)
                 py.click()
+
             else:
                 py.alert("A janela de Recebimentos não startou. Encerrando...")
                 exit()
+
         except KeyboardInterrupt as kex:
             print("Programa encerrado pelo usuário via teclado.")
             exit()
@@ -274,12 +288,13 @@ def automacao():
     #Gerador de repetições
     conexao = pyodbc.connect(dados_conexao)
     cursor = conexao.cursor()
-    time.sleep(2)
+    time.sleep(10)
     im3 = pyautogui.screenshot(f'db/image.png', region=(337,436,31,15))
     time.sleep(4)
     phrase2 = ocr.image_to_string(PIL.Image.open('db/image.png'), lang='por')
     print(int(phrase2))
-    cursor.execute(f"SELECT count(*) FROM RM.SZCONTROLRECEB WHERE DOCUMENTO = '{int(phrase2)}' AND CODCOMPRADOR = {codPlano} and DTRECEBIMENTO BETWEEN '01-jan-{entradaPeriodoAno.get()}' AND '31-dec-{entradaPeriodoAno.get()}';")
+    #Tabela SZPARCIALATEND fornece os dados com total acurácia. Tentar left join mais
+    cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(phrase2)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
     tables = int(cursor.fetchval())
     print(f"Foram encontradas {tables} ocorrências.")
     engine.say(f"Foram encontradas {tables} ocorrências.")
@@ -1453,38 +1468,41 @@ def automacao():
                 py.doubleClick()
             else:
                 py.alert("Número de laços ainda não reconhecido.")
-            #recebimento
-            py.moveTo(479,147)
-            py.click()
-            #Clicar na data
-            py.moveTo(412, 252)
-            py.click()
-            im1 = pyautogui.screenshot(f'valor/image{contador}.png', region=(618,193,40,16))
-            time.sleep(4)
-            phrase1 = ocr.image_to_string(PIL.Image.open(f'valor/image{contador}.png'), lang='por')
-            #Recortar valor
-            py.moveTo(494, 245)
-            py.click()
-            py.doubleClick()
-            py.press('backspace')
-            #Colar em Perda
-            py.moveTo(493,291)
-            py.doubleClick()
-            py.press('backspace')
-            replace = phrase1.replace(".",",")
-            print(replace)
-            py.write(replace)
-            #Gravando Processo no sistema
-            py.press('tab')
-            py.press('enter')
-            #Último Processo 
-            py.write('1')
-            py.press('enter')
-            #Saindo
-            py.press('enter')
-            py.press('enter')
-            py.press('enter')
-            time.sleep(4)
+            title = "Registro de Recebimento por Conta"
+            window = pygetwindow.getWindowsWithTitle(title)[0]
+            if window.title == "Registro de Recebimento por Conta (RDESKAMB.UNIFESO.LAN)":
+                #recebimento
+                py.moveTo(479,147)
+                py.click()
+                #Clicar na data
+                py.moveTo(412, 252)
+                py.click()
+                im1 = pyautogui.screenshot(f'valor/image{contador}.png', region=(618,193,45,16))
+                time.sleep(4)
+                phrase1 = ocr.image_to_string(PIL.Image.open(f'valor/image{contador}.png'), lang='por')
+                #Recortar valor
+                py.moveTo(494, 245)
+                py.click()
+                py.doubleClick()
+                py.press('backspace')
+                #Colar em Perda
+                py.moveTo(493,291)
+                py.doubleClick()
+                py.press('backspace')
+                replace = phrase1.replace(".",",")
+                print(replace)
+                py.write(replace)
+                #Gravando Processo no sistema
+                py.press('tab')
+                py.press('enter')
+                #Último Processo 
+                py.write('1')
+                py.press('enter')
+                #Saindo
+                py.press('enter')
+                py.press('enter')
+                py.press('enter')
+            time.sleep(18)
             title = "Erro"
             window = pygetwindow.getWindowsWithTitle(title)[0]
             if window.title == "Erro (RDESKAMB.UNIFESO.LAN)":
@@ -1502,6 +1520,14 @@ def automacao():
             resultado = (fim - inicio)
             print(f"Duração de execução até aqui foi de {resultado: .2f} segundos. E a ordem desse paciente  é a {contador}.")
             contador = contador + 1
+            while contador == tables:
+                py.moveTo(399,352)
+                py.click()
+                py.moveTo(349,444)
+                py.click()
+                py.press('down')
+            else:
+                py.alert("Perda efetuada no sistema")
         else:
             py.alert("Resoluçao de tela não compatível com o sistema. Finalizando...")
             exit()
@@ -1524,5 +1550,4 @@ btn = Button(window, text='Executar automação', command=recuperarLista, width=
 btn.place(x=90, y=140)
 
 window.mainloop()
-
 
