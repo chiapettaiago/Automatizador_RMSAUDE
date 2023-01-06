@@ -76,13 +76,6 @@ caixaUnidade = ttk.Combobox(window, values=[
 ])
 caixaUnidade.place(x=211, y=240, width=170)
 
-#Motor de sintetização de voz
-engine = pyttsx3.init()
-voices = engine.getProperty("voices")
-engine.setProperty('voice', voices[0].id)
-engine.setProperty("voice", "brazil")
-engine.setProperty("rate", 225)
-engine.runAndWait()
 
 #Aviso de recurso não disponível
 def baixa():
@@ -94,8 +87,6 @@ dados_conexao = ('DRIVER={Devart ODBC Driver for Oracle};Host=10.1.0.137;Port=15
 def automacao():
     inicio = time.time()
     py.alert("Atenção! A automação está sendo iniciada.")
-    engine.say("Atenção! A automação está sendo iniciada.")
-    engine.runAndWait()
     py.PAUSE = 1.2
     res = py.size()
     print(res)
@@ -297,8 +288,6 @@ def automacao():
     cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(phrase2)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
     tables = int(cursor.fetchval())
     print(f"Foram encontradas {tables} ocorrências.")
-    engine.say(f"Foram encontradas {tables} ocorrências.")
-    engine.runAndWait()
     contador = 0
     while contador != tables:
         #Variável de Geração de Screenshots
@@ -1477,7 +1466,7 @@ def automacao():
                 #Clicar na data
                 py.moveTo(412, 252)
                 py.click()
-                im1 = pyautogui.screenshot(f'valor/image{contador}.png', region=(618,193,45,16))
+                im1 = pyautogui.screenshot(f'valor/image{contador}.png', region=(618,193,60,16))
                 time.sleep(4)
                 phrase1 = ocr.image_to_string(PIL.Image.open(f'valor/image{contador}.png'), lang='por')
                 #Recortar valor
@@ -1510,7 +1499,6 @@ def automacao():
                     py.press('enter')
                 except:
                     print('Tela de conclusão era requerida para continuar!')
-                    engine.runAndWait()
                     exit()
             #Cancelando
             py.press('tab')
@@ -1520,12 +1508,16 @@ def automacao():
             resultado = (fim - inicio)
             print(f"Duração de execução até aqui foi de {resultado: .2f} segundos. E a ordem desse paciente  é a {contador}.")
             contador = contador + 1
+            #Laço de Repetição externo
             while contador == tables:
                 py.moveTo(399,352)
                 py.click()
                 py.moveTo(349,444)
                 py.click()
                 py.press('down')
+                imLoop = pyautogui.screenshot(f'imagens/image{contador}.png', region=(355,424,30,15))
+                time.sleep(3)
+                break
             else:
                 py.alert("Perda efetuada no sistema")
         else:
@@ -1533,10 +1525,6 @@ def automacao():
             exit()
     #Alerta de encerramento
     py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
-    engine.say("A automação foi finalizada. A máquina está liberada pra uso.")
-    engine.runAndWait()
-    engine.stop()
-    window.mainloop()
     exit()
 
 def recuperarLista():
