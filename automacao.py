@@ -1,3 +1,4 @@
+from numbers import Integral
 import pyautogui as py
 import pyautogui
 import pytesseract as ocr
@@ -14,7 +15,7 @@ from tkinter import ttk
 
 #Instanciando Tkinter e criando interface de usuário
 window = tk.Tk()
-window.title('RPA HCTCO')
+window.title('RPA com AI HCTCO')
 window.geometry('400x300')
 #Recurso que impede que o usuário redimensione a janela
 window.resizable(width=False, height=False)
@@ -67,8 +68,13 @@ caixaSelecao = ttk.Combobox(window, values=[
 ])
 caixaSelecao.place(x=210, y=200, width=170)
 
-textoUnidade = Label(window, text="Unidade de Faturamento: ", bg="#d3d3d3")
-textoUnidade.place(x=70, y=240)
+labelFatura = Label(window, text="Ordem da Fatura: ", bg="#d3d3d3")
+labelFatura.place(x=10 ,y=240)
+entradaOrdemFatura = Entry(window)
+entradaOrdemFatura.place(x=110, y=240, width=30)
+
+textoUnidade = Label(window, text="Unidade: ", bg="#d3d3d3")
+textoUnidade.place(x=160, y=240)
 caixaUnidade = ttk.Combobox(window, values=[
     "AMBULATÓRIO (FATURAMENTO)",
     "HOSPITAL DAS CLÍNICAS DE TERESÓPOLIS",
@@ -282,16 +288,44 @@ def automacao():
     time.sleep(10)
     im3 = pyautogui.screenshot(f'db/image.png', region=(337,436,31,15))
     time.sleep(4)
-    phrase2 = ocr.image_to_string(PIL.Image.open('db/image.png'), lang='por')
-    print(int(phrase2))
-    #Tabela SZPARCIALATEND fornece os dados com total acurácia. Tentar left join mais
-    cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(phrase2)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
-    tables = int(cursor.fetchval())
-    print(f"Foram encontradas {tables} ocorrências.")
+    def reconhecimento():
+        #phrase2 = ocr.image_to_string(PIL.Image.open('db/image.png'), lang='por')
+        #print(int(phrase2))
+        cursor.execute(f"SELECT count(A.NUMEROLOTE) FROM SZFATURACONVENIO A WHERE A.CODCOLIGADA = 1.000000 AND A.CODCOMPRADOR = {codPlano}.000000 AND A.IDUNIDFAT = {codHospital}.000000 AND A.STATUSPROTOCOLO <> 'C' AND (TO_CHAR(A.DATAGERACAO, 'MM')|| '/' || TO_CHAR(A.DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ORDER BY A.NUMEROREMESSA ASC;")
+        global tables
+        tables = int(cursor.fetchval())
+        print(f"Foram encontradas {tables} ocorrências na página de faturas.")
+        cursor.execute(f"SELECT NUMEROREMESSA FROM (SELECT ROW_NUMBER() OVER(ORDER BY NUMEROREMESSA ASC) AS Row#, CODCOLIGADA,CODCOMPRADOR, IDUNIDFAT, NUMEROLOTE, STATUSPROTOCOLO, NUMEROREMESSA FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND CODCOMPRADOR = {codPlano}.000000 AND IDUNIDFAT = {codHospital}.000000 AND STATUSPROTOCOLO <> 'C' AND (TO_CHAR(DATAGERACAO, 'MM')|| '/' || TO_CHAR(DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ) WHERE Row# = {entradaOrdemFatura.get()} ORDER BY NUMEROREMESSA ASC;")
+        global fatura
+        fatura = cursor.fetchval()
+        print(fatura)
+        #Marcar Fatura no sistema
+        if entradaOrdemFatura.get() == '1':
+            print("Fatura escolhida se encontra na primeira posição")
+        elif entradaOrdemFatura.get() == '2':
+            py.press('down')
+        elif entradaOrdemFatura.get() == '3':
+            py.press('down')
+            py.press('down')
+        elif entradaOrdemFatura.get() == '4':
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif entradaOrdemFatura.get() == '5':
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        #Tabela SZPARCIALATEND fornece os dados com total acurácia.
+        cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(fatura)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
+        global tables3
+        tables3 = int(cursor.fetchval())
+        print(f"{tables3} contas encontradas nessa fatura.")
+    reconhecimento()
     contador = 0
-    while contador != tables:
+    while contador != tables3:
         #Variável de Geração de Screenshots
-        im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,20))
+        im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,15))
         time.sleep(2)
         #Variável de processamento de imagens e obtenção de resultado para o sistema 100% testada e funcionando
         phrase = ocr.image_to_string(PIL.Image.open(f'imagens/image{contador}.png'), lang='por')
@@ -1478,7 +1512,7 @@ def automacao():
                 py.moveTo(493,291)
                 py.doubleClick()
                 py.press('backspace')
-                replace = phrase1.replace(".",",")
+                replace = phrase1.replace(".","")
                 print(replace)
                 py.write(replace)
                 #Gravando Processo no sistema
@@ -1509,23 +1543,20 @@ def automacao():
             print(f"Duração de execução até aqui foi de {resultado: .2f} segundos. E a ordem desse paciente  é a {contador}.")
             contador = contador + 1
             #Laço de Repetição externo
-            while contador == tables:
-                py.moveTo(399,352)
-                py.click()
-                py.moveTo(349,444)
-                py.click()
+        elif contador == tables3:
+            py.moveTo(399,352)
+            py.click()
+            py.moveTo(349,444)
+            py.click()
+            py.press('down')
+            if tables == 2:
                 py.press('down')
-                imLoop = pyautogui.screenshot(f'imagens/image{contador}.png', region=(355,424,30,15))
-                time.sleep(3)
-                break
-            else:
-                py.alert("Perda efetuada no sistema")
+                #for tabela in tables2:
+            py.alert("Perdas efetuadas no sistema.")
+            contador = contador - 1 
         else:
             py.alert("Resoluçao de tela não compatível com o sistema. Finalizando...")
             exit()
-    #Alerta de encerramento
-    py.alert("A automação foi finalizada. A máquina está liberada pra uso.")
-    exit()
 
 def recuperarLista():
     if Checkbutton1.get() == 1:
