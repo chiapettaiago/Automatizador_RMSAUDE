@@ -17,7 +17,7 @@ import numpy as np
 
 #Instanciando Tkinter e criando interface de usuário
 window = tk.Tk()
-window.title('RPA com AI HCTCO')
+window.title('Robô Automatizador Unifeso')
 window.geometry('400x300')
 #Recurso que impede que o usuário redimensione a janela
 window.resizable(width=False, height=False)
@@ -300,42 +300,44 @@ def automacao():
         cursor.execute(f"SELECT count(A.NUMEROLOTE) FROM SZFATURACONVENIO A WHERE A.CODCOLIGADA = 1.000000 AND A.CODCOMPRADOR = {codPlano}.000000 AND A.IDUNIDFAT = {codHospital}.000000 AND A.STATUSPROTOCOLO <> 'C' AND (TO_CHAR(A.DATAGERACAO, 'MM')|| '/' || TO_CHAR(A.DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ORDER BY A.NUMEROREMESSA ASC;")
         global tables
         tables = int(cursor.fetchval())
+        global value
+        value = int(entradaOrdemFatura.get())
         print(f"Foram encontradas {tables} ocorrências na página de faturas.")
-        cursor.execute(f"SELECT NUMEROREMESSA FROM (SELECT ROW_NUMBER() OVER(ORDER BY NUMEROREMESSA ASC) AS Row#, CODCOLIGADA,CODCOMPRADOR, IDUNIDFAT, NUMEROLOTE, STATUSPROTOCOLO, NUMEROREMESSA FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND CODCOMPRADOR = {codPlano}.000000 AND IDUNIDFAT = {codHospital}.000000 AND STATUSPROTOCOLO <> 'C' AND (TO_CHAR(DATAGERACAO, 'MM')|| '/' || TO_CHAR(DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ) WHERE Row# = {entradaOrdemFatura.get()} ORDER BY NUMEROREMESSA ASC;")
+        cursor.execute(f"SELECT NUMEROREMESSA FROM (SELECT ROW_NUMBER() OVER(ORDER BY NUMEROREMESSA ASC) AS Row#, CODCOLIGADA,CODCOMPRADOR, IDUNIDFAT, NUMEROLOTE, STATUSPROTOCOLO, NUMEROREMESSA FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND CODCOMPRADOR = {codPlano}.000000 AND IDUNIDFAT = {codHospital}.000000 AND STATUSPROTOCOLO <> 'C' AND (TO_CHAR(DATAGERACAO, 'MM')|| '/' || TO_CHAR(DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ) WHERE Row# = {value} ORDER BY NUMEROREMESSA ASC;")
         global fatura
         fatura = cursor.fetchval()
         print(fatura)
         #Marcar Fatura no sistema
-        if entradaOrdemFatura.get() == '1' or entradaOrdemFatura.get() == '':
+        if value == 1:
             print("Fatura escolhida se encontra na primeira posição")
-        elif entradaOrdemFatura.get() == '2':
+        elif value == 2:
             py.press('down')
-        elif entradaOrdemFatura.get() == '3':
+        elif value == 3:
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '4':
+        elif value == 4:
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '5':
+        elif value == 5:
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '6':
+        elif value == 6:
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '7':
+        elif value == 7:
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '8':
+        elif value == 8:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -343,7 +345,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '9':
+        elif value == 9:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -352,7 +354,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '10':
+        elif value == 10:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -362,7 +364,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '11':
+        elif value == 11:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -373,7 +375,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '12':
+        elif value == 12:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -385,7 +387,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '13':
+        elif value == 13:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -398,7 +400,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '14':
+        elif value == 14:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -412,7 +414,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '15':
+        elif value == 15:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -427,7 +429,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '16':
+        elif value == 16:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -443,7 +445,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() =='17':
+        elif value == 17:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -460,7 +462,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '18':
+        elif value == 18:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -478,7 +480,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '19':
+        elif value == 19:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -497,7 +499,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '20':
+        elif value == 20:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -517,7 +519,7 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '21':
+        elif value == 21:
             py.press('down')
             py.press('down')
             py.press('down')
@@ -538,7 +540,289 @@ def automacao():
             py.press('down')
             py.press('down')
             py.press('down')
-        elif entradaOrdemFatura.get() == '22':
+        elif value == 22:
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+    reconhecimento()
+    value = 1
+    contador = 0
+    while True:
+        cursor.execute(f"SELECT NUMEROREMESSA FROM (SELECT ROW_NUMBER() OVER(ORDER BY NUMEROREMESSA ASC) AS Row#, CODCOLIGADA,CODCOMPRADOR, IDUNIDFAT, NUMEROLOTE, STATUSPROTOCOLO, NUMEROREMESSA FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND CODCOMPRADOR = {codPlano}.000000 AND IDUNIDFAT = {codHospital}.000000 AND STATUSPROTOCOLO <> 'C' AND (TO_CHAR(DATAGERACAO, 'MM')|| '/' || TO_CHAR(DATAGERACAO, 'YYYY')  ) = '{entradaPeriodoMes.get()}/{entradaPeriodoAno.get()}' ) WHERE Row# = {value} ORDER BY NUMEROREMESSA ASC;")
+        faturaInt = cursor.fetchval()
+        print(faturaInt)
+        #Marcar Fatura no sistema
+        if value == 1:
+            print("Fatura escolhida se encontra na primeira posição")
+        elif value == 2:
+            py.press('down')
+        elif value == 3:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+        elif value == 4:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 5:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 6:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 7:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 8:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 9:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 10:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 11:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 12:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 13:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 14:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 15:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 16:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 17:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 18:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 19:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 20:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 21:
+            py.press('up')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+            py.press('down')
+        elif value == 22:
+            py.press('up')
             py.press('down')
             py.press('down')
             py.press('down')
@@ -561,13 +845,10 @@ def automacao():
             py.press('down')
             py.press('down')
         #Tabela SZPARCIALATEND fornece os dados com total acurácia.
-        cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(fatura)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
+        cursor.execute(f"SELECT count(*) FROM RM.SZPARCIALATEND WHERE NUMEROREMESSA = {int(faturaInt)} AND CODCONVENIO = {codPlano} AND IDUNIDFAT = {codHospital};")
         global tables3
         tables3 = int(cursor.fetchval())
         print(f"{tables3} contas encontradas nessa fatura.")
-    reconhecimento()
-    contador = 0
-    while True:
         #Variável de Geração de Screenshots
         im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,15))
         time.sleep(2)
@@ -1824,38 +2105,36 @@ def automacao():
             py.click()
             py.moveTo(349,444)
             py.click()
-            py.press('down')
-            value = int(entradaOrdemFatura.get())
-            if value == 1 or value == '':
+            if value == 1:
                 print("Fatura escolhida se encontra na primeira posição")
             elif value == 2:
                 py.press('down')
-            elif entradaOrdemFatura.get() == '3':
+            elif value == 3:
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '4':
+            elif value == 4:
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '5':
+            elif value == 5:
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '6':
+            elif value == 6:
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '7':
+            elif value == 7:
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '8':
+            elif value == 8:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1863,7 +2142,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '9':
+            elif value == 9:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1872,7 +2151,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '10':
+            elif value == 10:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1882,7 +2161,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '11':
+            elif value == 11:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1893,7 +2172,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '12':
+            elif value == 12:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1905,7 +2184,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '13':
+            elif value == 13:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1918,7 +2197,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '14':
+            elif value == 14:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1932,7 +2211,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '15':
+            elif value == 15:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1947,7 +2226,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '16':
+            elif value == 16:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1963,7 +2242,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() =='17':
+            elif value == 17:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1980,7 +2259,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '18':
+            elif value == 18:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -1998,7 +2277,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '19':
+            elif value == 19:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -2017,7 +2296,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '20':
+            elif value == 20:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -2037,7 +2316,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '21':
+            elif value == 21:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -2058,7 +2337,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-            elif entradaOrdemFatura.get() == '22':
+            elif value == 22:
                 py.press('down')
                 py.press('down')
                 py.press('down')
@@ -2081,8 +2360,8 @@ def automacao():
                 py.press('down')
                 py.press('down')
             py.alert("Perdas efetuadas no sistema.")
-            value + 1
-            contador = contador - 1 
+            contador = 0
+            value = value + 1
     else:
         py.alert("Resoluçao de tela não compatível com o sistema. Finalizando...")
         exit()
