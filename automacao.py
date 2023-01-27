@@ -14,6 +14,10 @@ from tkinter import ttk
 import locale
 import cv2
 import numpy as np
+import logging
+
+#Instanciar arquivo de logs no sistema
+logging.basicConfig(filename='logs/atividade.log', level=logging.DEBUG)
 
 dsn = cx_Oracle.makedsn('10.1.0.137', 1521, 'dbfesocons')
 user = 'rm'
@@ -21,6 +25,7 @@ password = 'f/M701iv_LoAE1@'
 
 dados_conexao = cx_Oracle.connect(user, password, dsn)
 
+logging.debug("Application started")
 
 #Instanciando Tkinter e criando interface de usuário
 window = tk.Tk()
@@ -40,6 +45,9 @@ def clear2():
 
 def clear1():
     Checkbutton1.set(0)
+
+def vazio():
+    messagebox.showwarning("Alerta de Campos Vazios", "Você precisa preencher todos os campos para iniciar o processamento.")
 
 #CheckBox da Interface do App 
 btn1 = Checkbutton(window, text="Baixa", variable=Checkbutton1, onvalue=1, offvalue=0, height=2, width=10, command=clear2)
@@ -1609,6 +1617,15 @@ def automacao():
         global tables3
         tables3 = int(cursor.fetchone()[0])
         print(f"{tables3} contas encontradas nessa fatura.")
+        #Verificar se conta é de Recursos ou não. Apenas que não são de Recursos devem ser baixadas
+        sql5 = "SELECT 'CONTA INICIAL' TIPO_CONTA, F.SIGLA, A.DATAENTRADA, A.DATASAIDA, B.NUMEROREMESSA  REMESSA,  to_char(G.DATAGERACAO, 'DD/MM/YYY') GERACAO, E.PRONTUARIO, E.CODPACIENTE, A.CODATENDIMENTO,E.NOMEPACIENTE PACIENTE, B.IDUNIDFAT, A.CODCOMPRADOR FROM SZATENDIMENTO A INNER JOIN SZPARCIALATEND B ON  A.CODCOLIGADA = B.CODCOLIGADA     AND A.NUMEROCONTA = B.NUMEROCONTA  AND A.SEQUENCIALCONTA = B.SEQUENCIALCONTA INNER JOIN SZPACIENTE E ON  A.CODCOLIGADA = E.CODCOLIGADA  AND A.CODPACIENTE = E.CODPACIENTE INNER JOIN SZCADGERAL F ON A.CODCOLIGADA = F.CODCOLIGADA  AND B.CODCONVENIO = F.CODGERAL INNER JOIN SZFATURACONVENIO G ON A.CODCOLIGADA = G.CODCOLIGADA  AND B.CODCONVENIO = G.CODCOMPRADOR AND B.CODCOLIGADA = G.CODCOLIGADA  AND B.NUMEROREMESSA = G.NUMEROREMESSA WHERE A.CODCOLIGADA = 1 and g.numeroremessa = "+str(faturaInt)+" and g.codcomprador = "+str(codPlano)+" AND A.CODCOMPRADOR NOT IN (494, 25, 3087) UNION ALL SELECT 'CONTA DE RECURSO' TIPO_CONTA, F.SIGLA, A.DATAENTRADA, A.DATASAIDA, B.NUMEROREMESSA  REMESSA, to_char(G.DATAGERACAO, 'DD/MM/YYY') GERACAO, E.PRONTUARIO, E.CODPACIENTE, A.CODATENDIMENTO, E.NOMEPACIENTE PACIENTE, B.IDUNIDFAT, A.CODCOMPRADOR FROM SZATENDIMENTOREC A INNER JOIN SZPARCIALATEND B ON  A.CODCOLIGADA = B.CODCOLIGADA AND A.NUMEROCONTA = B.NUMEROCONTA AND A.SEQUENCIALCONTA = B.SEQUENCIALCONTA INNER JOIN SZPACIENTE E ON  A.CODCOLIGADA = E.CODCOLIGADA  AND A.CODPACIENTE = E.CODPACIENTE INNER JOIN SZCADGERAL F ON A.CODCOLIGADA = F.CODCOLIGADA  AND B.CODCONVENIO = F.CODGERAL INNER JOIN SZFATURACONVENIO G ON A.CODCOLIGADA = G.CODCOLIGADA  AND B.CODCONVENIO = G.CODCOMPRADOR  AND B.CODCOLIGADA = G.CODCOLIGADA  AND B.NUMEROREMESSA = G.NUMEROREMESSA WHERE A.CODCOLIGADA = 1 AND B.STATUS = 'F' and g.numeroremessa = "+str(faturaInt)+" and g.codcomprador = "+str(codPlano)+" --AND G.STATUSPROTOCOLO = 'F' AND A.CODCOMPRADOR NOT IN (494, 25, 3087)"
+        cursor.execute(sql5)
+        global contaRecurso
+        contaRecurso = cursor.fetchall()
+        contaRecursoSorted = sorted(contaRecurso, key=lambda x: x[9])
+        boolRecurso = contaRecursoSorted[contador]
+        tipo_conta = boolRecurso[0]
+        print(tipo_conta)
         #Variável de Geração de Screenshots
         im = pyautogui.screenshot(f'imagens/image{contador}.png', region=(400,235,54,15))
         time.sleep(2)
@@ -1620,61 +1637,61 @@ def automacao():
             py.moveTo(610,356)
             py.click()
             #Marcar conta no sistema
-            if contador == 0:
+            if (contador == 0) and (tipo_conta == 'CONTA INICIAL'):   
                 py.moveTo(467,458)
                 py.doubleClick()
-            elif contador == 1:
+            elif (contador == 1) and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(537,478)
                 py.doubleClick()
-            elif contador == 2:
+            elif (contador == 2) and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(537,495)
                 py.doubleClick()
-            elif contador == 3:
+            elif (contador == 3) and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(467,510)
                 py.doubleClick()
-            elif contador == 4:
+            elif (contador == 4) and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(479,527)
                 py.doubleClick()
-            elif contador == 5:
+            elif (contador == 5) and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(477,543)
                 py.doubleClick()
-            elif contador == 6:
+            elif contador == 6 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(454, 560)
                 py.doubleClick()
-            elif contador == 7:
+            elif contador == 7 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(479,578) 
                 py.doubleClick()
-            elif contador == 8:
+            elif contador == 8 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(474, 596)
                 py.doubleClick()
-            elif contador == 9:
+            elif contador == 9 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(469,612)
                 py.doubleClick()
-            elif contador == 10:
+            elif contador == 10 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(452,627)
                 py.doubleClick()
-            elif contador == 11:
+            elif contador == 11 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(466,644)
                 py.doubleClick()
-            elif contador == 12:
+            elif contador == 12 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(515, 645)
                 py.click()
                 py.press('down')
                 py.doubleClick()
-            elif contador == 13:
+            elif contador == 13 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 14:
+            elif contador == 14 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 15:
+            elif contador == 15 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1682,7 +1699,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 16:
+            elif contador == 16 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1691,7 +1708,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 17:
+            elif contador == 17 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1701,7 +1718,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 18:
+            elif contador == 18 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1712,7 +1729,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 19:
+            elif contador == 19 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1724,7 +1741,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 20:
+            elif contador == 20 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1737,7 +1754,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 21:
+            elif contador == 21 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1751,7 +1768,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 22:
+            elif contador == 22 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1766,7 +1783,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 23:
+            elif contador == 23 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1782,7 +1799,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 24:
+            elif contador == 24  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1799,7 +1816,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 25:
+            elif contador == 25  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1817,7 +1834,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 26:
+            elif contador == 26  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1836,7 +1853,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 27:
+            elif contador == 27  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1856,7 +1873,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 28:
+            elif contador == 28  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1877,7 +1894,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 29:
+            elif contador == 29 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1899,7 +1916,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 30:
+            elif contador == 30  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1922,7 +1939,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 31:
+            elif contador == 31  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1946,7 +1963,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 32:
+            elif contador == 32 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1971,7 +1988,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 33:
+            elif contador == 33 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -1997,7 +2014,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 34:
+            elif contador == 34 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2024,7 +2041,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 35:
+            elif contador == 35 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2052,7 +2069,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 36:
+            elif contador == 36 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2081,7 +2098,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 37:
+            elif contador == 37 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2111,7 +2128,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 38:
+            elif contador == 38 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2142,7 +2159,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 39:
+            elif contador == 39 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2174,7 +2191,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 40:
+            elif contador == 40 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2207,7 +2224,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 41:
+            elif contador == 41 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2241,7 +2258,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 42:
+            elif contador == 42 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2276,7 +2293,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 43:
+            elif contador == 43 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2312,7 +2329,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 44:
+            elif contador == 44 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2349,7 +2366,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 45:
+            elif contador == 45 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2387,7 +2404,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 46:
+            elif contador == 46  and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2426,7 +2443,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 47:
+            elif contador == 47 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2466,7 +2483,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 48:
+            elif contador == 48 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2507,7 +2524,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 49:
+            elif contador == 49 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2549,7 +2566,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 50:
+            elif contador == 50 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2592,7 +2609,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 51:
+            elif contador == 51 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2636,7 +2653,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 52:
+            elif contador == 52 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2681,7 +2698,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 53:
+            elif contador == 53 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2727,7 +2744,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 54:
+            elif contador == 54 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2774,7 +2791,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 55:
+            elif contador == 55 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2822,7 +2839,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 56:
+            elif contador == 56 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2871,7 +2888,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 57:
+            elif contador == 57 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2921,7 +2938,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 58:
+            elif contador == 58 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -2972,7 +2989,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 59:
+            elif contador == 59 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3024,7 +3041,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 60:
+            elif contador == 60 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3077,7 +3094,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 61:
+            elif contador == 61 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3131,7 +3148,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 62:
+            elif contador == 62 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3186,7 +3203,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 63:
+            elif contador == 63 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3242,7 +3259,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 64:
+            elif contador == 64 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3299,7 +3316,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 65:
+            elif contador == 65 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3350,7 +3367,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 66:
+            elif contador == 66 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3402,7 +3419,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 67:
+            elif contador == 67 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3455,7 +3472,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 68:
+            elif contador == 68 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3509,7 +3526,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 69:
+            elif contador == 69 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3564,7 +3581,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 70:
+            elif contador == 70 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3620,7 +3637,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 71:
+            elif contador == 71 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3677,7 +3694,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 72:
+            elif contador == 72 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3734,7 +3751,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 73:
+            elif contador == 73 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3791,7 +3808,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 74:
+            elif contador == 74 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3849,7 +3866,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 75:
+            elif contador == 75 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3908,7 +3925,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 76:
+            elif contador == 76 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -3968,7 +3985,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 77:
+            elif contador == 77 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4029,7 +4046,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 78:
+            elif contador == 78 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4091,7 +4108,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 79:
+            elif contador == 79 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4154,7 +4171,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 80:
+            elif contador == 80 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4218,7 +4235,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 81:
+            elif contador == 81 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4283,7 +4300,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 83:
+            elif contador == 83 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4349,7 +4366,7 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.doubleClick()
-            elif contador == 83:
+            elif contador == 84 and (tipo_conta == 'CONTA INICIAL'):
                 py.moveTo(517, 645)
                 py.click()
                 py.press('down')
@@ -4414,8 +4431,11 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
+                py.press('down')
                 py.doubleClick()
-                
+            elif tipo_conta == "CONTA DE RECURSO":
+                contador += 1
+                continue
             else:
                 py.alert("Número de laços ainda não reconhecido.")
             title = "Registro de Recebimento por Conta"
@@ -4499,17 +4519,6 @@ def automacao():
             #Cancelando
             py.press('tab')
             py.press('tab')
-            #Loops extras
-            '''
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            py.press('tab')
-            '''
             py.press('enter')
             fim = time.time()
             resultado = (fim - inicio)
@@ -5768,26 +5777,26 @@ def automacao():
                 py.press('down')
                 py.press('down')
                 py.press('down')
-                py.press('down')
-
-
-
-
-
-                
+                py.press('down')             
     else:
         py.alert("Resoluçao de tela não compatível com o sistema. Finalizando...")
         exit()
 
 def recuperarLista():
-    if Checkbutton1.get() == 1:
+    valorMes = entradaPeriodoMes.get()
+    valorAno = entradaPeriodoAno.get()
+    if Checkbutton1.get() == 1 and len(valorMes > 0) and len(valorAno > 0):
         baixa()
         exit()
     elif Checkbutton2.get() == 1:
         automacao()
+    else:
+        vazio()
         
 btn = Button(window, text='Executar automação', command=recuperarLista, width=30, bg="#d3d3d3")
 btn.place(x=90, y=140)
 
+cursor.close()
 window.mainloop()
+
 
