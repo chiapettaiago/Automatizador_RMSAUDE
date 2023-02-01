@@ -1,0 +1,7 @@
+pyautogui
+pytesseract
+cx_Oracle
+numpy
+pillow
+pygetwindow
+cv
