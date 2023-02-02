@@ -2,7 +2,7 @@ from numbers import Integral
 import pyautogui as py
 import pyautogui
 import pytesseract as ocr
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 import PIL.Image
 import time
 import pygetwindow
@@ -86,8 +86,8 @@ caixaSelecao.place(x=210, y=200, width=170)
 
 labelFatura = Label(window, text="Fatura: ", bg="#d3d3d3")
 labelFatura.place(x=10 ,y=240)
-entradaOrdemFatura = Entry(window)
-entradaOrdemFatura.place(x=55, y=240, width=40)
+entradaFatura = Entry(window)
+entradaFatura.place(x=55, y=240, width=40)
 
 textoUnidade = Label(window, text="Unidade: ", bg="#d3d3d3")
 textoUnidade.place(x=160, y=240)
@@ -113,168 +113,209 @@ def automacao():
     py.click(x, y)
     x, y = py.locateCenterOnScreen('itens/controlerecebimentos.png')
     py.click(x, y)
-    x,y = py.locateCenterOnScreen('itens/fatura.png')
-    py.click(x, y)
+    title = "Controle de Recebimentos (RDESKAMB.UNIFESO.LAN)"
+    try:
+        window = pygetwindow.getWindowsWithTitle(title)[0]
+        x,y = py.locateCenterOnScreen('itens/fatura.png')
+        py.click(x, y)
 
-    x, y = py.locateCenterOnScreen('itens/competencia.png')
-    py.click(x, y)
-    py.write(str(entradaPeriodoMes.get()) + str(entradaPeriodoAno.get()), interval=0.3)
+        x, y = py.locateCenterOnScreen('itens/competencia.png')
+        py.click(x, y)
+        py.write(str(entradaPeriodoMes.get()) + str(entradaPeriodoAno.get()), interval=0.3)
 
-    x, y = py.locateCenterOnScreen('itens/convenio.png')
-    py.click(x, y)
+        x, y = py.locateCenterOnScreen('itens/convenio.png')
+        py.click(x, y)
 
-    valuePeriodoMes = entradaPeriodoMes.get()
-    valuePeriodoAno = entradaPeriodoAno.get()
-    valuePeriodo = str(valuePeriodoMes) + '/' + str(valuePeriodoAno)
-    conexao = cx_Oracle.connect(user, password, dsn)
-    cursor = conexao.cursor()
-    sql = "SELECT COUNT(SIGLA) FROM SZCADGERAL WHERE CODCOLIGADA = 1.000000 AND CLASSIFICACAO = 'C' AND SITUACAO = 'A' AND TIPOFATURAMENTO = 1 AND CODGERAL IN (SELECT CODCOMPRADOR CODGERAL FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND (TO_CHAR(DATAGERACAO,'MM')|| '/' || TO_CHAR(DATAGERACAO,'YYYY')) = '"+str(valuePeriodo)+"') ORDER BY SIGLA"
-    cursor.execute(sql)
-    tentativas = cursor.fetchone()[0]
-    print(tentativas)
-    max_tries = tentativas
-    tries = 0
+        valuePeriodoMes = entradaPeriodoMes.get()
+        valuePeriodoAno = entradaPeriodoAno.get()
+        valuePeriodo = str(valuePeriodoMes) + '/' + str(valuePeriodoAno)
+        conexao = cx_Oracle.connect(user, password, dsn)
+        cursor = conexao.cursor()
+        sql = "SELECT COUNT(SIGLA) FROM SZCADGERAL WHERE CODCOLIGADA = 1.000000 AND CLASSIFICACAO = 'C' AND SITUACAO = 'A' AND TIPOFATURAMENTO = 1 AND CODGERAL IN (SELECT CODCOMPRADOR CODGERAL FROM SZFATURACONVENIO WHERE CODCOLIGADA = 1.000000 AND (TO_CHAR(DATAGERACAO,'MM')|| '/' || TO_CHAR(DATAGERACAO,'YYYY')) = '"+str(valuePeriodo)+"') ORDER BY SIGLA"
+        cursor.execute(sql)
+        tentativas = cursor.fetchone()[0]
+        print(tentativas)
+        max_tries = tentativas
+        tries = 0
+        if caixaSelecao.get() == "AMIL":
+            codPlano = 5
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/amil.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "ASSIM":
+            codPlano = 7
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/assim.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click('descer')
+        elif caixaSelecao.get() == "BR DISTRIBUIDORA":
+            codPlano = 1678
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/amil.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                        descer = py.locateCenterOnScreen('itens/descer.png')
+                        py.click(descer)
+        elif caixaSelecao.get() == "BRADESCO":
+            codPlano = 27
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/bradesco.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "CAC":
+            codPlano = 10
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/cac.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "CEF":
+            codPlano = 1151
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/cef.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "CORPO DE BOMBEIROS DO ESTADO DO RIO DE JANEIRO":
+            codPlano = 2879
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/corpobomb.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "FUSMA":
+            codPlano = 5383
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/fusma.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "GOLDEN CROSS":
+            codPlano = 20
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/golden.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "MEDISERVICE":
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/mediservice.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+                    codPlano = 24            
+        elif caixaSelecao.get() == "PETROBRAS":
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/petrobras.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                        descer = py.locateCenterOnScreen('itens/descer.png')
+                        py.click(descer)
+                        codPlano = 26
+        elif caixaSelecao.get() == "POSTAL SAUDE":
+            codPlano = 4113
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/postal.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+        elif caixaSelecao.get() == "SUL AMERICA":
+            codPlano = 31
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/sulamerica.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        elif caixaSelecao.get() == "UNIMED":
+            codPlano = '4131'
+            while tries != max_tries:
+                try:
+                    x, y = py.locateCenterOnScreen('itens/unimed.png')
+                    py.click(x, y)
+                    break
+                except Exception as e:
+                    descer = py.locateCenterOnScreen('itens/descer.png')
+                    py.click(descer)
+        else:
+            print("Plano de saúde não encontrado")
+    except:
+            print("A janela de Recebimentos não saiu.")
+    pointx, pointy = py.locateCenterOnScreen('itens/faturamento.png')
+    print(pointx, pointy)
+    py.click(pointx, pointy)
 
-    if caixaSelecao.get() == "AMIL":
-        codPlano = 5
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/amil.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "ASSIM":
-        codPlano = 7
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/assim.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click('descer')
-    elif caixaSelecao.get() == "BR DISTRIBUIDORA":
-        codPlano = 1678
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/amil.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "BRADESCO":
-        codPlano = 27
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/bradesco.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "CAC":
-        codPlano = 10
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/cac.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "CEF":
-        codPlano = 1151
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/cef.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "CORPO DE BOMBEIROS DO ESTADO DO RIO DE JANEIRO":
-        codPlano = 2879
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/corpobomb.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "FUSMA":
-        codPlano = 5383
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/fusma.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "GOLDEN CROSS":
-        codPlano = 20
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/golden.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "MEDISERVICE":
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/mediservice.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-        codPlano = 24            
-    elif caixaSelecao.get() == "PETROBRAS":
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/petrobras.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-        codPlano = 26
-    elif caixaSelecao.get() == "POSTAL SAUDE":
-        codPlano = 4113
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/postal.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-    elif caixaSelecao.get() == "SUL AMERICA":
-        codPlano = 31
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/sulamerica.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
-    elif caixaSelecao.get() == "UNIMED":
-        codPlano = '4131'
-        while tries != max_tries:
-            try:
-                x, y = py.locateCenterOnScreen('itens/unimed.png')
-                py.click(x, y)
-            except Exception as e:
-                descer = py.locateCenterOnScreen('itens/descer.png')
-                py.click(descer)
+    if caixaUnidade.get() == "HOSPITAL DAS CLÍNICAS DE TERESÓPOLIS":
+        codHospital = 3
+        x, y = py.locateCenterOnScreen('itens/hct.png')
+        py.click(x, y)
+    elif caixaUnidade.get() == "AMBULATÓRIO (FATURAMENTO)":
+        codHospital = 13
+        x, y = py.locateCenterOnScreen('itens/ambulatorio.png')
+        py.click(x, y)
+    elif caixaUnidade.get() == "MATERNIDADE DO HCTCO (FATURAMENTO)":
+        codHospital = 14
+        x, y = py.locateCenterOnScreen('itens/maternidade.png')
+        py.click(x, y)
     else:
-        print("Nenhuma informação encontrada")
+        print("Local de atendimento não encontrado")
 
-faturamento = py.locateCenterOnScreen('itens/faturamento.png')
-print(faturamento)
-py.click(faturamento)
-
-if caixaUnidade.get() == "HOSPITAL DAS CLÍNICAS DE TERESÓPOLIS":
-    codHospital = 3
-elif caixaUnidade.get() == "AMBULATÓRIO (FATURAMENTO)":
-    codHospital = 13
-                    
-elif caixaUnidade.get() == "MATERNIDADE DO HCTCO (FATURAMENTO)":
-   codHospital = 14
-                    
+    pesquisa = py.locateCenterOnScreen('itens/pesquisa.png')
+    py.click(pesquisa)
+            
+    time.sleep(5)
+            
+    fatura = entradaFatura.get()
+    print(fatura)
+    screenshot = pyautogui.screenshot()
+    text = ocr.image_to_data(screenshot, output_type='dict', lang='eng')
+    for i in range(len(text['text'])):
+        if text['text'][i] == fatura:
+            x, y, w, h = text['left'][i], text['top'][i], text['width'][i], text['height'][i]
+            screen_x, screen_y = x + w / 2, y + h / 2
+            py.click(screen_x, screen_y)
+            break
+    else:
+        print("Texto não encontrado.")
 
 def recuperarLista():
     if Checkbutton1.get():
