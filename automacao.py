@@ -19,9 +19,9 @@ import logging
 #Instanciar arquivo de logs no sistema
 logging.basicConfig(filename='logs/atividade.log', level=logging.DEBUG)
 
-dsn = cx_Oracle.makedsn('10.1.0.137', 1521, 'dbfesocons')
-user = 'rm'
-password = 'f/M701iv_LoAE1@'
+dsn = cx_Oracle.makedsn('#########', #####, '#######')
+user = '##'
+password = '###############'
 
 dados_conexao = cx_Oracle.connect(user, password, dsn)
 
